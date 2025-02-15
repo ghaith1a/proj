@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Repository\CoursRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,8 +14,14 @@ final class ClientController extends AbstractController
         return $this->render('client/index.html.twig');
     }
     #[Route('/courses', name: 'app_courses')]
-    public function courses(): Response
+    public function courses(CoursRepository $coursRepository): Response
     {
-        return $this->render('client/courses.html.twig');
+        // Retrieve all courses from the database
+        $courses = $coursRepository->findAll();
+
+        // Pass the courses data to the template
+        return $this->render('client/courses.html.twig', [
+            'courses' => $courses,
+        ]);
     }
 }

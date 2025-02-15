@@ -59,7 +59,9 @@
             <div class="navbar-nav mx-auto">
                 <a href="" class="nav-item nav-link {% if app.request.get('_route') == '' %}active{% endif %}">Home</a>
                 <a href="" class="nav-item nav-link {% if app.request.get('_route') == '' %}active{% endif %}">About Us</a>
-                <a href="" class="nav-item nav-link {% if app.request.get('_route') == 'app_courses' %}active{% endif %}">Courses</a>
+       <a href="{{ path('app_courses') }}" class="nav-item nav-link {% if app.request.get('_route') == 'app_courses' %}active{% endif %}">
+                                                                                                                            Courses
+                                                                                                                        </a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle {% if app.request.get('_route') in ['', 'app_team', 'app_cta', 'app_appointment', 'app_404'] %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
