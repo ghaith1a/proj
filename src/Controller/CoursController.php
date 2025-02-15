@@ -9,7 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[Route('/cours')]
 final class CoursController extends AbstractController
@@ -30,6 +32,31 @@ final class CoursController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle the image upload if a file was uploaded
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+                // Move the file to the directory where images are stored
+                try {
+                    $imageFile->move(
+                        $this->getParameter('images_directory'), // Folder path from config/services.yaml
+                        $newFilename
+                    );
+
+                    // Save the file name in the database
+                    $cour->setImage($newFilename);
+                } catch (FileException $e) {
+                    // Handle any errors during the file upload
+                    $this->addFlash('error', 'Failed to upload the image.');
+                    return $this->render('cours/new.html.twig', [
+                        'cour' => $cour,
+                        'form' => $form,
+                    ]);
+                }
+            }
+
+            // Persist the Cours entity (with the image filename)
             $entityManager->persist($cour);
             $entityManager->flush();
 
@@ -58,6 +85,29 @@ final class CoursController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle image upload during edit if a new file is provided
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+
+                    // Update the image path in the database
+                    $cour->setImage($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Failed to upload the image.');
+                    return $this->render('cours/edit.html.twig', [
+                        'cour' => $cour,
+                        'form' => $form,
+                    ]);
+                }
+            }
+
+            // Update other course details
             $entityManager->flush();
 
             $this->addFlash('success', 'Le cours a été modifié avec succès.');

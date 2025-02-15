@@ -6,8 +6,10 @@ use App\Entity\Cours;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class CoursType extends AbstractType
 {
@@ -27,7 +29,17 @@ class CoursType extends AbstractType
                 'label' => 'Date du cours',
                 'widget' => 'single_text',
             ])
-        ;
+            ->add('image', FileType::class, [
+                'label' => 'Image (JPG, PNG file)',
+                'mapped' => false,  // Not mapped to entity directly
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Please upload a valid image (JPG or PNG)',
+                    ])
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
