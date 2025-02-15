@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+{% extends 'base_back.html.twig' %}
 
-<title>New Devoir</title>
+{% block title %}Nouveau Devoir{% endblock %}
 
-{% block body %}
-    <h1>Create new Devoir</h1>
+{% block content %}
+    <div class="container mt-4">
+        <h1>Créer un nouveau Devoir</h1>
 
-    {{ include('devoir/_form.html.twig') }}
-
-    <a href="{{ path('app_devoir_index') }}">back to list</a>
+        {{ include('devoir/_form.html.twig') }}
+    </div>
 {% endblock %}

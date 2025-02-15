@@ -33,19 +33,20 @@ final class CoursController extends AbstractController
             $entityManager->persist($cour);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Le cours a été créé avec succès.');
             return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('cours/new.html.twig', [
             'cour' => $cour,
-            'form' => $form->createView(), // Ajouté pour éviter les erreurs
+            'form' => $form,
         ]);
     }
 
     #[Route('/{id}', name: 'app_cours_show', methods: ['GET'])]
     public function show(Cours $cour): Response
     {
-        return $this->render('devoir/index.html.twig', [
+        return $this->render('cours/show.html.twig', [
             'cour' => $cour,
         ]);
     }
@@ -59,23 +60,29 @@ final class CoursController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Le cours a été modifié avec succès.');
             return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('cours/edit.html.twig', [
             'cour' => $cour,
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 
-    #[Route('/{id}', name: 'app_cours_delete', methods: ['POST','DELETE'])]
+    #[Route('/{id}', name: 'app_cours_delete', methods: ['POST'])]
     public function delete(Request $request, Cours $cour, EntityManagerInterface $entityManager): Response
     {
-        
-            $entityManager->remove($cour);
-            $entityManager->flush();
-        
-        return $this->redirectToRoute('app_cours_index'
-    );
+        if ($this->isCsrfTokenValid('delete'.$cour->getId(), $request->request->get('_token'))) {
+            try {
+                $entityManager->remove($cour);
+                $entityManager->flush();
+                $this->addFlash('success', 'Le cours a été supprimé avec succès.');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression du cours.');
+            }
+        }
+
+        return $this->redirectToRoute('app_cours_index', [], Response::HTTP_SEE_OTHER);
     }
 }

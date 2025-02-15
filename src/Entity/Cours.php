@@ -31,12 +31,12 @@ class Cours
     /**
      * @var Collection<int, Devoir>
      */
-    #[ORM\OneToMany(targetEntity: Devoir::class, mappedBy: 'cours')]
-    private Collection $test;
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Devoir::class, cascade: ['remove'])]
+    private Collection $devoirs;
 
     public function __construct()
     {
-        $this->test = new ArrayCollection();
+        $this->devoirs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,7 +52,6 @@ class Cours
     public function setTitre(string $titre): static
     {
         $this->titre = $titre;
-
         return $this;
     }
 
@@ -64,7 +63,6 @@ class Cours
     public function setDescrC(string $descrC): static
     {
         $this->descrC = $descrC;
-
         return $this;
     }
 
@@ -76,7 +74,6 @@ class Cours
     public function setMatiereC(string $matiereC): static
     {
         $this->matiereC = $matiereC;
-
         return $this;
     }
 
@@ -88,34 +85,33 @@ class Cours
     public function setDateC(\DateTimeInterface $dateC): static
     {
         $this->dateC = $dateC;
-
         return $this;
     }
 
     /**
      * @return Collection<int, Devoir>
      */
-    public function getTest(): Collection
+    public function getDevoirs(): Collection
     {
-        return $this->test;
+        return $this->devoirs;
     }
 
-    public function addTest(Devoir $test): static
+    public function addDevoir(Devoir $devoir): static
     {
-        if (!$this->test->contains($test)) {
-            $this->test->add($test);
-            $test->setCours($this);
+        if (!$this->devoirs->contains($devoir)) {
+            $this->devoirs->add($devoir);
+            $devoir->setCours($this);
         }
 
         return $this;
     }
 
-    public function removeTest(Devoir $test): static
+    public function removeDevoir(Devoir $devoir): static
     {
-        if ($this->test->removeElement($test)) {
-            // set the owning side to null (unless already changed)
-            if ($test->getCours() === $this) {
-                $test->setCours(null);
+        if ($this->devoirs->removeElement($devoir)) {
+            // Set the owning side to null (unless already changed)
+            if ($devoir->getCours() === $this) {
+                $devoir->setCours(null);
             }
         }
 

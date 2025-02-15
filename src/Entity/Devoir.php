@@ -23,10 +23,11 @@ class Devoir
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateD = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
 
-    #[ORM\ManyToOne(inversedBy: 'test')]
+    #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'devoirs')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Cours $cours = null;
 
     public function getId(): ?int
@@ -42,7 +43,6 @@ class Devoir
     public function setTitreD(string $titreD): static
     {
         $this->titreD = $titreD;
-
         return $this;
     }
 
@@ -54,7 +54,6 @@ class Devoir
     public function setDescrD(string $descrD): static
     {
         $this->descrD = $descrD;
-
         return $this;
     }
 
@@ -66,7 +65,6 @@ class Devoir
     public function setDateD(\DateTimeInterface $dateD): static
     {
         $this->dateD = $dateD;
-
         return $this;
     }
 
@@ -75,10 +73,9 @@ class Devoir
         return $this->comment;
     }
 
-    public function setComment(string $comment): static
+    public function setComment(?string $comment): static
     {
         $this->comment = $comment;
-
         return $this;
     }
 
@@ -90,7 +87,6 @@ class Devoir
     public function setCours(?Cours $cours): static
     {
         $this->cours = $cours;
-
         return $this;
     }
 }

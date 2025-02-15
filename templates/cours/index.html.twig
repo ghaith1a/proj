@@ -2,19 +2,65 @@
 
 {% block title %}Liste des Cours{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .table th, .table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 110px;
+            text-align: center;
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="container mt-4">
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <div class="card-" style="padding: 20px; text-align: right;">
-            <a href="{{ path('app_cours_new') }}" class="btn btn-success btn-lg">
-                <i class="fas fa-plus-circle"></i> Ajouter 
-            </a>
-        </div>
-        <h2 class="fw-bold mb-0"><i class="fas fa-book"></i> Liste des Cours</h2>
-
+                <h2 class="fw-bold mb-0"><i class="fas fa-book"></i> Liste des Cours</h2>
+                <a href="{{ path('app_cours_new') }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus-circle"></i> Ajouter
+                </a>
             </div>
             <div class="card-body p-4">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
                 {% if cours is empty %}
                     <div class="alert alert-warning text-center fw-semibold">Aucun cours trouvé.</div>
                 {% else %}
@@ -27,7 +73,7 @@
                                     <th>Description</th>
                                     <th>Matière</th>
                                     <th>Date</th>
-                                    <th colspan="2">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -40,13 +86,14 @@
                                     <td>{{ cour.dateC ? cour.dateC|date('d/m/Y H:i') : '-' }}</td>
                                     <td class="actions-cell">
                                         <div class="btn-group">
-                                            <a href="{{ path('app_cours_show', {'id': cour.id}) }}" class="btn btn-info btn-sm">
-                                                <i class="fas fa-eye"></i> Devoir
+                                            <a href="{{ path('app_devoir_by_cours', {'id': cour.id}) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> Devoirs
                                             </a>
                                             <a href="{{ path('app_cours_edit', {'id': cour.id}) }}" class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i> Modifier
                                             </a>
                                             <form method="post" action="{{ path('app_cours_delete', {'id': cour.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce cours ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cour.id) }}">
                                                 <button type="submit" class="btn btn-danger btn-sm">
                                                     <i class="fas fa-trash"></i> Supprimer
                                                 </button>
@@ -62,45 +109,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        /* Style du tableau */
-        .table th, .table td {
-            padding: 12px;
-            vertical-align: middle;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        /* Groupe de boutons alignés avec le même espace */
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        /* Uniformisation des boutons */
-        .btn {
-            width: 110px;
-            text-align: center;
-            font-size: 14px;
-            padding: 6px 12px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .btn-group {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                font-size: 12px;
-                padding: 5px 10px;
-            }
-        }
-    </style>
 {% endblock %}
