@@ -111,7 +111,7 @@
 
                             <!-- Assignments Section -->
                             <div class="mb-5">
-                                <h6 class="section-title bg-white text-start text-primary pe-3">Assignments</h6>
+                                <h6 class="section-title bg-white text-start text-primary pe-3">Devoirs</h6>
                                 {% if devoirs is defined and devoirs|length > 0 %}
                                     <div class="list-group">
                                         {% for devoir in devoirs %}
@@ -125,7 +125,7 @@
                                         {% endfor %}
                                     </div>
                                 {% else %}
-                                    <p class="text-muted">No assignments available for this course yet.</p>
+                                    <p class="text-muted">No devoirs available for this course yet.</p>
                                 {% endif %}
                             </div>
 
@@ -135,11 +135,9 @@
                                     <a href="{{ path('app_courses') }}" class="btn btn-primary rounded-pill py-3 px-5 w-100">Back to Courses</a>
                                 </div>
                                 <div class="col-sm-6">
-{% for devoir in devoirs %}
-    <a href="{{ path('app_devoir2_show', {'id': devoir.id}) }}" class="btn btn-primary">Devoirs</a>
-{% else %}
-    <p>Aucun devoir disponible pour ce cours.</p>
-{% endfor %}
+
+    <a href="" class="btn btn-primary">Devoirs</a>
+
 
 
                                 </div>
