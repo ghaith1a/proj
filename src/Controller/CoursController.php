@@ -37,7 +37,7 @@ final class CoursController extends AbstractController
             if ($imageFile) {
                 $newFilename = uniqid() . '.' . $imageFile->guessExtension();
 
-                // Move the file to the directory where images are stored
+                
                 try {
                     $imageFile->move(
                         $this->getParameter('images_directory'), // Folder path from config/services.yaml

@@ -1,18 +1,23 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Cours;
+use App\Entity\Devoir;
 use App\Repository\CoursRepository;
+use App\Repository\DevoirRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+
 #[Route('/client')]
 final class ClientController extends AbstractController
 {
-    #[Route( name: 'app_client')]
+    #[Route(name: 'app_client')]
     public function index(): Response
     {
         return $this->render('client/index.html.twig');
     }
+
     #[Route('/courses', name: 'app_courses')]
     public function courses(CoursRepository $coursRepository): Response
     {
@@ -24,4 +29,33 @@ final class ClientController extends AbstractController
             'courses' => $courses,
         ]);
     }
+
+    #[Route('/course/{id}', name: 'app_course_show')]
+    public function show(Cours $cour, DevoirRepository $devoirRepository, CoursRepository $coursRepository): Response
+    {
+        // Get the assignments related to the course
+        $devoirs = $devoirRepository->findBy(['cours' => $cour]);
+
+        // Get related courses (e.g., same subject)
+        $relatedCourses = $coursRepository->findBy(
+            ['matiereC' => $cour->getMatiereC()],
+            null,
+            3
+        );
+
+        return $this->render('client/showcourse.html.twig', [
+            'cour' => $cour,
+            'devoirs' => $devoirs,
+            'relatedCourses' => $relatedCourses,
+        ]);
+    }
+
+    #[Route('/devoir/{id}', name: 'app_devoir2_show')]
+    public function showDevoir(Devoir $devoir): Response
+    {
+        return $this->render('client/devoirs.html.twig', [
+            'devoir' => $devoir,
+        ]);
+    }
+    
 }

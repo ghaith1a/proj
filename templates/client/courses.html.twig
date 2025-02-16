@@ -108,7 +108,8 @@
                         <h5 class="card-title">{{ course.titre }}</h5>
                         <p class="card-text">{{ course.descrC }}</p>
                          <p class="card-text">{{ course.matiereC }}</p>
-                        <a href="#" class="btn btn-primary">Learn More</a>
+                        <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn btn-primary">Learn More</a>
+
                     </div>
                 </div>
             </div>
