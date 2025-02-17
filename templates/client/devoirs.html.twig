@@ -1,0 +1,21 @@
+
+
+{% block title %}Devoirs for {{ cour.titre }}{% endblock %}
+
+{% block body %}
+    <h1>Devoirs for {{ cour.titre }}</h1>
+
+    {% if devoirs is empty %}
+        <p>No devoirs available for this course.</p>
+    {% else %}
+        <ul>
+            {% for devoir in devoirs %}
+                <li>
+                    <strong>{{ devoir.titreD }}</strong> - {{ devoir.descrD }}
+                    <br>
+                    Due Date: {{ devoir.dateD|date('Y-m-d H:i') }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

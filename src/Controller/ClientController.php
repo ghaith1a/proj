@@ -57,5 +57,16 @@ final class ClientController extends AbstractController
             'devoir' => $devoir,
         ]);
     }
+    #[Route('/course/{id}/devoirs', name: 'app_devoirs_by_course')]
+public function getDevoirsByCourse(Cours $cour, DevoirRepository $devoirRepository): Response
+{
+    $devoirs = $devoirRepository->findBy(['cours' => $cour]);
+
+    return $this->render('client/devoirs.html.twig', [
+        'cour' => $cour,
+        'devoirs' => $devoirs,
+    ]);
+}
+
     
 }
