@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class DevoirType extends AbstractType
 {
@@ -18,20 +20,44 @@ class DevoirType extends AbstractType
         $builder
             ->add('titreD', TextType::class, [
                 'label' => 'Titre du devoir',
+                'required' => true,
+                'empty_data' => '',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => '',
+                    ]),
+                    new Length([
+                        'min' => 5,
+                        'minMessage' => '',
+                    ]),
+                ],
             ])
             ->add('descrD', TextType::class, [
                 'label' => 'Description',
+                'required' => true,
+                'empty_data' => '',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => '',
+                    ]),
+                ],
             ])
             ->add('dateD', DateTimeType::class, [
                 'label' => 'Date de remise',
                 'widget' => 'single_text',
+                'required' => true,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'La date de remise ne peut pas être vide.',
+                    ]),
+                ],
             ])
             ->add('comment', TextType::class, [
                 'label' => 'Commentaire',
                 'required' => false,
+                'empty_data' => '',
             ]);
 
-        // Ajouter le champ 'cours' seulement si aucun cours n'est déjà défini
         if (!$builder->getData() || !$builder->getData()->getCours()) {
             $builder->add('cours', EntityType::class, [
                 'class' => Cours::class,
@@ -39,6 +65,11 @@ class DevoirType extends AbstractType
                 'label' => 'Cours associé',
                 'placeholder' => 'Choisissez un cours',
                 'required' => true,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez sélectionner un cours.',
+                    ]),
+                ],
             ]);
         }
     }

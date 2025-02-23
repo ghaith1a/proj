@@ -52,32 +52,27 @@ final class DevoirController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_devoir_show', methods: ['GET'])]
-    public function show(Devoir $devoir): Response
-    {
-        return $this->render('devoir/show.html.twig', [
-            'devoir' => $devoir,
-        ]);
-    }
+
 
     #[Route('/{id}/edit', name: 'app_devoir_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Devoir $devoir, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(DevoirType::class, $devoir);
-        $form->handleRequest($request);
+public function edit(Request $request, Devoir $devoir, EntityManagerInterface $entityManager): Response
+{
+    $form = $this->createForm(DevoirType::class, $devoir);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->flush();
 
-            $this->addFlash('success', 'Le devoir a été modifié avec succès.');
-            return $this->redirectToRoute('app_devoir_by_cours', ['id' => $devoir->getCours()->getId()], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('devoir/edit.html.twig', [
-            'devoir' => $devoir,
-            'form' => $form,
-        ]);
+        $this->addFlash('success', 'Le devoir a été modifié avec succès.');
+        return $this->redirectToRoute('app_devoir_by_cours', ['id' => $devoir->getCours()->getId()], Response::HTTP_SEE_OTHER);
     }
+
+    // Nous passons bien "devoir" au template
+    return $this->render('devoir/edit.html.twig', [
+        'devoir' => $devoir, // Passer "devoir" ici
+        'form' => $form,
+    ]);
+}
 
     #[Route('/{id}', name: 'app_devoir_delete', methods: ['POST'])]
     public function delete(Request $request, Devoir $devoir, EntityManagerInterface $entityManager): Response

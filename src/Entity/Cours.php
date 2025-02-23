@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CoursRepository::class)]
 class Cours
@@ -17,26 +18,22 @@ class Cours
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $titre = null;
+    #[Assert\NotBlank(message: "Le titre ne peut pas être vide.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "Le titre doit contenir au moins {{ limit }} caractères.", maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères.")]
+    private ?string $titre = '';  // Valeur par défaut vide
 
     #[ORM\Column(length: 255)]
-    private ?string $descrC = null;
+    #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "La description doit contenir au moins {{ limit }} caractères.", maxMessage: "La description ne peut pas dépasser {{ limit }} caractères.")]
+    private ?string $descrC = '';  // Valeur par défaut vide
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $image = null;
 
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): self
-    {
-        $this->image = $image;
-
-        return $this;
-    }
     #[ORM\Column(length: 255)]
-    private ?string $matiereC = null;
+    #[Assert\NotBlank(message: "La matière ne peut pas être vide.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "La matière doit contenir au moins {{ limit }} caractères.", maxMessage: "La matière ne peut pas dépasser {{ limit }} caractères.")]
+    private ?string $matiereC = '';  // Valeur par défaut vide
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateC = null;
@@ -98,6 +95,17 @@ class Cours
     public function setDateC(\DateTimeInterface $dateC): static
     {
         $this->dateC = $dateC;
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
         return $this;
     }
 

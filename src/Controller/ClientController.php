@@ -67,6 +67,13 @@ public function getDevoirsByCourse(Cours $cour, DevoirRepository $devoirReposito
         'devoirs' => $devoirs,
     ]);
 }
+#[Route('/{id}', name: 'app_devoir_show', methods: ['GET'])]
+public function show1(Devoir $devoir): Response
+{
+    return $this->render('client/show.html.twig', [
+        'devoir' => $devoir,
+    ]);
+}
 
     
 }
