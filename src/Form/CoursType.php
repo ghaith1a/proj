@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -23,34 +24,31 @@ class CoursType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Le titre du cours ne peut pas être vide.',
+                        'message' => '',
                     ]),
                     new Length([
                         'min' => 5,
-                        'minMessage' => 'Le titre du cours doit comporter au moins {{ limit }} caractères.',
+                        'minMessage' => '',
                     ]),
                 ],
-                'empty_data' => '',  // Valeur par défaut vide
             ])
             ->add('descrC', TextType::class, [
                 'label' => 'Description',
                 'required' => true,
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'La description ne peut pas être vide.',
+                        'message' => '',
                     ]),
                 ],
-                'empty_data' => '',  // Valeur par défaut vide
             ])
             ->add('matiereC', TextType::class, [
                 'label' => 'Matière',
                 'required' => true,
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'La matière ne peut pas être vide.',
+                        'message' => '',
                     ]),
                 ],
-                'empty_data' => '',  // Valeur par défaut vide
             ])
             ->add('dateC', DateTimeType::class, [
                 'label' => 'Date du cours',
@@ -64,15 +62,29 @@ class CoursType extends AbstractType
             ])
             ->add('image', FileType::class, [
                 'label' => 'Image (JPG, PNG file)',
-                'mapped' => false,  // Not mapped to entity directly
+                'mapped' => false,
                 'required' => false,
                 'constraints' => [
                     new File([
+                        'maxSize' => '1024k',
                         'mimeTypes' => ['image/jpeg', 'image/png'],
                         'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPG ou PNG)',
                     ])
                 ],
-                'empty_data' => '',  // Remplacer par une chaîne vide
+            ])
+            ->add('supportC', FileType::class, [
+                'label' => 'Support de cours (PDF)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid PDF document',
+                    ])
+                ],
             ]);
     }
 

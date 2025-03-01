@@ -1,21 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base_front1.html.twig' %}
 
-<head>
-    <meta charset="utf-8">
-    <title>{% block title %}{{ cour.titre }} - Détails du cours{% endblock %}</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+{% block title %}{{ cour.titre }} - Détails du cours{% endblock %}
 
-    <!-- Favicon -->
-    <link href="{{ asset('Front/img/favicon.ico') }}" rel="icon">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
-    
+{% block css %}
     <!-- Icon Font Stylesheet -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
@@ -27,41 +14,16 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 
+    <!-- Star Rating Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-bar-rating/1.2.2/themes/fontawesome-stars.css">
+
     <!-- Template Stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    {% block head_styles %}{% endblock %}
-</head>
+{% endblock %}
 
-<body>
+{% block content %}
     <div class="container-xxl bg-white p-0">
-        {% block navbar %}
-        <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
-            <a href="" class="navbar-brand">
-                <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>Alamni</h1>
-            </a>
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav mx-auto">
-                    <a href="" class="nav-item nav-link">Home</a>
-                    <a href="" class="nav-item nav-link">About Us</a>
-                    <a href="{{ path('app_courses') }}" class="nav-item nav-link active">Courses</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                        <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
-                            <a href="" class="dropdown-item">School Facilities</a>
-                            <a href="" class="dropdown-item">Popular Teachers</a>
-                            <a href="" class="dropdown-item">Become A Teacher</a>
-                            <a href="" class="dropdown-item">Make Appointment</a>
-                        </div>
-                    </div>
-                    <a href="" class="nav-item nav-link">Contact Us</a>
-                </div>
-                <a href="#" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Join Us<i class="fa fa-arrow-right ms-3"></i></a>
-            </div>
-        </nav>
-        {% endblock %}
+      
 
         {% block header %}
         <div class="container-fluid bg-primary mb-5">
@@ -109,7 +71,30 @@
                                 </div>
                             </div>
 
-                           
+                            <!-- Support de cours -->
+                            <div class="mb-4">
+                                <h6 class="section-title bg-white text-start text-primary pe-3">Support de cours</h6>
+                                {% if cour.supportC %}
+                                    <a href="{{ asset('uploads/supports/' ~ cour.supportC) }}" target="_blank" class="btn btn-secondary">Télécharger le support</a>
+                                {% else %}
+                                    <p class="text-muted">Aucun support disponible</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Rating -->
+                            <div class="mb-4">
+                                <h6 class="section-title bg-white text-start text-primary pe-3">Rating</h6>
+                                <form action="{{ path('app_cours_rate', {'id': cour.id}) }}" method="post">
+                                    <select id="course-rating" name="rating" autocomplete="off">
+                                        <option value="1" {% if cour.rating == 1 %}selected{% endif %}>1</option>
+                                        <option value="2" {% if cour.rating == 2 %}selected{% endif %}>2</option>
+                                        <option value="3" {% if cour.rating == 3 %}selected{% endif %}>3</option>
+                                        <option value="4" {% if cour.rating == 4 %}selected{% endif %}>4</option>
+                                        <option value="5" {% if cour.rating == 5 %}selected{% endif %}>5</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary mt-2">Submit Rating</button>
+                                </form>
+                            </div>
 
                             <!-- Action Buttons -->
                             <div class="row g-3">
@@ -117,11 +102,7 @@
                                     <a href="{{ path('app_courses') }}" class="btn btn-primary rounded-pill py-3 px-5 w-100">Back to Courses</a>
                                 </div>
                                 <div class="col-sm-6">
-
-<a href="{{ path('app_devoirs_by_course', {'id': cour.id }) }}" class="btn btn-primary">Devoirs</a>
-
-
-
+                                    <a href="{{ path('app_devoirs_by_course', {'id': cour.id }) }}" class="btn btn-primary">Devoirs</a>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +128,7 @@
                                         <div class="position-relative overflow-hidden rounded">
                                             <img class="img-fluid" src="{{ asset('uploads/images/' ~ relatedCourse.image) }}" alt="{{ relatedCourse.titre }}">
                                             <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                                <a href="" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
+                                                <a href="{{ path('app_cours_show', {'id': relatedCourse.id}) }}" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
                                             </div>
                                         </div>
                                         <div class="bg-light text-center p-4">
@@ -174,62 +155,25 @@
         </div>
         {% endblock %}
 
-        {% block footer %}
-        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-lg-3 col-md-6">
-                        <h3 class="text-white mb-4">Get In Touch</h3>
-                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                        <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h3 class="text-white mb-4">Quick Links</h3>
-                        <a class="btn btn-link text-white-50" href="">About Us</a>
-                        <a class="btn btn-link text-white-50" href="">Contact Us</a>
-                        <a class="btn btn-link text-white-50" href="">Our Services</a>
-                        <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
-                        <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h3 class="text-white mb-4">Photo Gallery</h3>
-                        <div class="row g-2 pt-2">
-                            <div class="col-4">
-                                <img class="img-fluid rounded bg-light p-1" src="{{ asset('img/classes-1.jpg') }}" alt="">
-                            </div>
-                            <div class="col-4">
-                                <img class="img-fluid rounded bg-light p-1" src="{{ asset('img/classes-2.jpg') }}" alt="">
-                            </div>
-                            <div class="col-4">
-                                <img class="img-fluid rounded bg-light p-1" src="{{ asset('img/classes-3.jpg') }}" alt="">
-                            </div>
-                            <div class="col-4">
-                                <img class="img-fluid rounded bg-light p-1" src="{{ asset('img/classes-4.jpg') }}" alt="">
-                            </div>
-                            <div class="col-4">
-                                <img class="img-fluid rounded bg-light p-1" src="{{ asset('img/classes-5.jpg') }}" alt="">
-                            </div>
-                            <div class="col-4">
-                                <img class="img-fluid rounded bg-light p-1" src="{{ asset('img/classes-6.jpg') }}" alt="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h3 class="text-white mb-4">Newsletter</h3>
-                        <p>Subscribe to our newsletter
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endblock %}
+       
     </div>
-</body>
+{% endblock %}
 
-</html>
+{% block js %}
+    <!-- Star Rating Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-bar-rating/1.2.2/jquery.barrating.min.js"></script>
+    <script>
+        $(function() {
+            $('#course-rating').barrating({
+                theme: 'fontawesome-stars',
+                onSelect: function(value, text, event) {
+                    if (typeof(event) !== 'undefined') {
+                        // rating was selected by a user
+                        alert('You selected ' + value + ' stars');
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -8,10 +8,12 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\File;
 
 class DevoirType extends AbstractType
 {
@@ -24,7 +26,7 @@ class DevoirType extends AbstractType
                 'empty_data' => '',
                 'constraints' => [
                     new NotBlank([
-                        'message' => '',
+                        'message' => 'Le titre du devoir ne peut pas être vide.',
                     ]),
                     new Length([
                         'min' => 5,
@@ -38,7 +40,7 @@ class DevoirType extends AbstractType
                 'empty_data' => '',
                 'constraints' => [
                     new NotBlank([
-                        'message' => '',
+                        'message' => 'La description ne peut pas être vide.',
                     ]),
                 ],
             ])
@@ -56,6 +58,20 @@ class DevoirType extends AbstractType
                 'label' => 'Commentaire',
                 'required' => false,
                 'empty_data' => '',
+            ])
+            ->add('supportD', FileType::class, [
+                'label' => 'Support de devoir (PDF)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger un document PDF valide.',
+                    ])
+                ],
             ]);
 
         if (!$builder->getData() || !$builder->getData()->getCours()) {

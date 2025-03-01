@@ -20,12 +20,12 @@ class Cours
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le titre ne peut pas être vide.")]
     #[Assert\Length(min: 5, max: 255, minMessage: "Le titre doit contenir au moins {{ limit }} caractères.", maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères.")]
-    private ?string $titre = '';  // Valeur par défaut vide
+    private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
     #[Assert\Length(min: 5, max: 255, minMessage: "La description doit contenir au moins {{ limit }} caractères.", maxMessage: "La description ne peut pas dépasser {{ limit }} caractères.")]
-    private ?string $descrC = '';  // Valeur par défaut vide
+    private ?string $descrC = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $image = null;
@@ -33,21 +33,28 @@ class Cours
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La matière ne peut pas être vide.")]
     #[Assert\Length(min: 5, max: 255, minMessage: "La matière doit contenir au moins {{ limit }} caractères.", maxMessage: "La matière ne peut pas dépasser {{ limit }} caractères.")]
-    private ?string $matiereC = '';  // Valeur par défaut vide
+    private ?string $matiereC = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotNull(message: "La date du cours ne peut pas être vide.")]
     private ?\DateTimeInterface $dateC = null;
 
-    /**
-     * @var Collection<int, Devoir>
-     */
     #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Devoir::class, cascade: ['remove'])]
     private Collection $devoirs;
+
+    #[ORM\Column(length: 255)]
+    private ?string $supportC = null;
+
+    #[ORM\Column]
+    private ?int $rating = null;
 
     public function __construct()
     {
         $this->devoirs = new ArrayCollection();
+        $this->dateC = new \DateTime();
     }
+
+    // Getters and setters...
 
     public function getId(): ?int
     {
@@ -59,7 +66,7 @@ class Cours
         return $this->titre;
     }
 
-    public function setTitre(string $titre): static
+    public function setTitre(?string $titre): self
     {
         $this->titre = $titre;
         return $this;
@@ -70,7 +77,7 @@ class Cours
         return $this->descrC;
     }
 
-    public function setDescrC(string $descrC): static
+    public function setDescrC(?string $descrC): self
     {
         $this->descrC = $descrC;
         return $this;
@@ -81,7 +88,7 @@ class Cours
         return $this->matiereC;
     }
 
-    public function setMatiereC(string $matiereC): static
+    public function setMatiereC(?string $matiereC): self
     {
         $this->matiereC = $matiereC;
         return $this;
@@ -92,7 +99,7 @@ class Cours
         return $this->dateC;
     }
 
-    public function setDateC(\DateTimeInterface $dateC): static
+    public function setDateC(?\DateTimeInterface $dateC): self
     {
         $this->dateC = $dateC;
         return $this;
@@ -109,32 +116,50 @@ class Cours
         return $this;
     }
 
-    /**
-     * @return Collection<int, Devoir>
-     */
     public function getDevoirs(): Collection
     {
         return $this->devoirs;
     }
 
-    public function addDevoir(Devoir $devoir): static
+    public function addDevoir(Devoir $devoir): self
     {
         if (!$this->devoirs->contains($devoir)) {
             $this->devoirs->add($devoir);
             $devoir->setCours($this);
         }
-
         return $this;
     }
 
-    public function removeDevoir(Devoir $devoir): static
+    public function removeDevoir(Devoir $devoir): self
     {
         if ($this->devoirs->removeElement($devoir)) {
-            // Set the owning side to null (unless already changed)
             if ($devoir->getCours() === $this) {
                 $devoir->setCours(null);
             }
         }
+        return $this;
+    }
+
+    public function getSupportC(): ?string
+    {
+        return $this->supportC;
+    }
+
+    public function setSupportC(string $supportC): static
+    {
+        $this->supportC = $supportC;
+
+        return $this;
+    }
+
+    public function getRating(): ?int
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?int $rating): static
+    {
+        $this->rating = $rating;
 
         return $this;
     }
