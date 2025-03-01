@@ -13,38 +13,156 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-
     <!-- Template Stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <style>
+        .course-header {
+            background: linear-gradient(rgba(24, 29, 56, .7), rgba(24, 29, 56, .7)), url('{{ asset('img/courses-bg.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+            margin-bottom: 50px;
+        }
+
+        .course-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            overflow: hidden;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2C3E50;
+        }
+
+        .card-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .badge {
+            padding: 0.5em 1em;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            border-radius: 30px;
+            padding: 8px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .matiere-tag {
+            background-color: #f8f9fa;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #06BBCC;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
+    <!-- Header Section -->
+    <div class="course-header">
+        <div class="container">
+            <div class="text-center text-white">
+                <h1 class="display-4 animated slideInDown">Mes Cours</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{{ path('app_client') }}">Accueil</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Cours</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Courses Section -->
     <div class="container-xxl py-5">
         <div class="container">
             <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                <h1 class="mb-3">Mes Cours</h1>
-                <p>Découvrez vos cours disponibles</p>
+                <h2 class="display-6 mb-3">Explorez vos cours</h2>
+                <p class="text-muted">Niveau actuel : <span class="badge bg-primary">{{ app.user.niveau }}</span></p>
             </div>
+            
+            {% set matchingCourses = 0 %}
             
             <div class="row g-4">
                 {% for course in courses %}
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="card h-100">
-                            {% if course.image %}
-                                <img src="{{ asset('uploads/images/' ~ course.image) }}" class="card-img-top" alt="{{ course.titre }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ course.titre }}</h5>
-                                <p class="card-text">{{ course.descrC }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">{{ course.matiereC }}</small>
-                                    <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn btn-primary">Voir détails</a>
+                    {% if course.niveau|lower == app.user.niveau|lower %}
+                        {% set matchingCourses = matchingCourses + 1 %}
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ (loop.index0 * 0.1)|number_format(1) }}s">
+                            <div class="card course-card h-100 shadow-sm">
+                                {% if course.image %}
+                                    <div class="overflow-hidden">
+                                        <img src="{{ asset('uploads/images/' ~ course.image) }}" class="card-img-top" alt="{{ course.titre }}">
+                                    </div>
+                                {% else %}
+                                    <div class="card-img-top bg-light text-center d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-book fa-3x text-primary"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ course.titre }}</h5>
+                                    <p class="card-text flex-grow-1">{{ course.descrC|length > 100 ? course.descrC|slice(0, 100) ~ '...' : course.descrC }}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="matiere-tag">
+                                            <i class="fas fa-book-open me-2"></i>
+                                            {{ course.matiereC }}
+                                        </span>
+                                        <span class="badge bg-{{ course.niveau|lower == 'lycee' ? 'success' : 'warning' }}">
+                                            <i class="fas fa-graduation-cap me-1"></i>
+                                            {{ course.niveau }}
+                                        </span>
+                                    </div>
+                                    <a href="{{ path('app_course_show', {'id': course.id}) }}" 
+                                       class="btn btn-primary mt-4">
+                                        <i class="fas fa-arrow-right me-2"></i>
+                                        Voir détails
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
             </div>
+
+            {% if matchingCourses == 0 %}
+                <div class="alert alert-info text-center mt-5 p-4 wow fadeIn" data-wow-delay="0.1s">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h4>Aucun cours disponible</h4>
+                    <p class="mb-0">Aucun cours n'est actuellement disponible pour votre niveau ({{ app.user.niveau }}). 
+                    Veuillez vérifier ultérieurement.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

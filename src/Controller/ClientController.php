@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 use App\Entity\Cours;
+
 use App\Entity\Devoir;
 use App\Entity\Ratings;
 use App\Repository\CoursRepository;
@@ -25,12 +26,12 @@ final class ClientController extends AbstractController
     #[Route('/courses', name: 'app_courses')]
     public function courses(CoursRepository $coursRepository): Response
     {
-        // Retrieve all courses from the database
-        $courses = $coursRepository->findAll();
-
-        // Pass the courses data to the template
+        $user = $this->getUser();
+        $courses = $coursRepository->findAll(); // Récupère tous les cours
+    
         return $this->render('client/courses.html.twig', [
             'courses' => $courses,
+            'user' => $user,
         ]);
     }
 
@@ -71,54 +72,13 @@ public function getDevoirsByCourse(Cours $cour, DevoirRepository $devoirReposito
         'devoirs' => $devoirs,
     ]);
 }
-#[Route('/{id}', name: 'app_devoir_show', methods: ['GET'])]
+#[Route('/{id}', name: 'app_devoir_show11', methods: ['GET'])]
 public function show1(Devoir $devoir): Response
 {
     return $this->render('client/show.html.twig', [
         'devoir' => $devoir,
     ]);
 }
-#[Route('/course/{id}/rate', name: 'rate_course', methods: ['POST'])]
-    public function rateCourse(Request $request, EntityManagerInterface $em, int $id, RatingsRepository $ratingRepo): Response
-    {
-        $user = $this->getUser();
-        $course = $em->getRepository(Cours::class)->find($id);
-        
-        if (!$course) {
-            throw $this->createNotFoundException('Course not found');
-        }
-
-        $ratingValue = (int) $request->request->get('rating');
-        if ($ratingValue < 1 || $ratingValue > 5) {
-            return $this->json(['error' => 'Invalid rating value'], 400);
-        }
-
-        // Check if user already rated this course
-        $existingRating = $ratingRepo->findOneBy(['user' => $user, 'cours' => $course]);
-
-        if ($existingRating) {
-            $existingRating->setValue($ratingValue);
-        } else {
-            $rating = new Ratings();
-            $rating->setUser($user);
-            $rating->setCours($course);
-            $rating->setValue($ratingValue);
-            $em->persist($rating);
-        }
-
-        $em->flush();
-
-        // Calculate the average rating
-        $ratings = $ratingRepo->findBy(['cours' => $course]);
-        $averageRating = array_sum(array_map(function($rating) {
-            return $rating->getValue();
-        }, $ratings)) / count($ratings);
-
-        $course->setAverageRating($averageRating);
-        $em->flush();
-
-        return $this->json(['success' => 'Rating submitted']);
-    }
 
     
 }

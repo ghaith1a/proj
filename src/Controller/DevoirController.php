@@ -76,7 +76,7 @@ class DevoirController extends AbstractController
     #[Route('/{id}', name: 'app_devoir_show', methods: ['GET'])]
     public function show(Devoir $devoir): Response
     {
-        return $this->render('devoir/show.html.twig', [
+        return $this->render('client/show.html.twig', [
             'devoir' => $devoir,
         ]);
     }

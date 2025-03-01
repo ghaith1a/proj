@@ -45,16 +45,16 @@ class Cours
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $supportC = null;
 
-    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Ratings::class, cascade: ['remove'])]
-    private Collection $ratings;
+   
 
     #[ORM\Column(length: 255)]
+  
     private ?string $niveau = null;
 
     public function __construct()
     {
         $this->devoirs = new ArrayCollection();
-        $this->ratings = new ArrayCollection();
+      
         $this->dateC = new \DateTime();
     }
 
@@ -153,51 +153,16 @@ class Cours
         return $this;
     }
 
-    public function getRatings(): Collection
-    {
-        return $this->ratings;
-    }
+   
 
-    public function addRating(Ratings $rating): self
-    {
-        if (!$this->ratings->contains($rating)) {
-            $this->ratings->add($rating);
-            $rating->setCours($this);
-        }
-        return $this;
-    }
 
-    public function removeRating(Ratings $rating): self
-    {
-        if ($this->ratings->removeElement($rating)) {
-            if ($rating->getCours() === $this) {
-                $rating->setCours(null);
-            }
-        }
-        return $this;
-    }
 
-    public function getAverageRating(): float
-    {
-        if ($this->ratings->isEmpty()) {
-            return 0;
-        }
-
-        $sum = array_reduce($this->ratings->toArray(), fn($carry, $rating) => $carry + $rating->getValue(), 0);
-        return round($sum / count($this->ratings), 1); // Rounded to 1 decimal
-    }
-
-    public function getRatingCount(): int
-    {
-        return count($this->ratings);
-    }
-
-    public function getNiveau(): ?string
+    public function getniveau(): ?string
     {
         return $this->niveau;
     }
 
-    public function setNiveau(string $niveau): static
+    public function setniveau(string $niveau): static
     {
         $this->niveau = $niveau;
 

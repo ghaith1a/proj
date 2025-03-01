@@ -28,8 +28,8 @@
         }
 
         .course-image {
-            width: 30px; /* Ajustez la largeur selon vos besoins */
-            height: 30px; /* Ajustez la hauteur selon vos besoins */
+            width: 0px; /* Ajustez la largeur selon vos besoins */
+            height: 0px; /* Ajustez la hauteur selon vos besoins */
             object-fit: cover;
             border-radius: 2px;
         }
@@ -96,6 +96,7 @@
                                 <th>Description</th>
                                 <th>Matière</th>
                                 <th>Date</th>
+                                <th>Niveau</th>
                                 <th>Support</th>
                                 <th>Actions</th>
                             </tr>
@@ -115,6 +116,7 @@
                                 <td>{{ cour.descrC|length > 20 ? cour.descrC|slice(0, 20) ~ '...' : cour.descrC }}</td>
                                 <td class="matiere-column">{{ cour.matiereC|length > 10 ? cour.matiereC|slice(0, 10) ~ '...' : cour.matiereC }}</td>
                                 <td>{{ cour.dateC ? cour.dateC|date('d/m/y') : '-' }}</td>
+                                <td>{{ cour.niveau }}</td>
                                 <td>
                                     {% if cour.supportC %}
                                         <a href="{{ asset('uploads/supports/' ~ cour.supportC) }}" target="_blank" class="btn btn-sm btn-secondary">Télécharger</a>

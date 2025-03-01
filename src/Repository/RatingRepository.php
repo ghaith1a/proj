@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Ratings;
+use App\Entity\Rating;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Ratings>
+ * @extends ServiceEntityRepository<Rating>
  */
-class RatingsRepository extends ServiceEntityRepository
+class RatingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Ratings::class);
+        parent::__construct($registry, Rating::class);
     }
 
 //    /**
-//     * @return Ratings[] Returns an array of Ratings objects
+//     * @return Rating[] Returns an array of Rating objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -31,7 +31,7 @@ class RatingsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Ratings
+//    public function findOneBySomeField($value): ?Rating
 //    {
 //        return $this->createQueryBuilder('r')
 //            ->andWhere('r.exampleField = :val')
