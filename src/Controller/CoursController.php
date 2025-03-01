@@ -181,20 +181,7 @@ final class CoursController extends AbstractController
         return $response;
     }
 
-    #[Route('/{id}/rate', name: 'app_cours_rate', methods: ['POST'])]
-    public function rate(Request $request, Cours $cour, EntityManagerInterface $entityManager): Response
-    {
-        $rating = $request->request->get('rating');
-        if ($rating !== null) {
-            $cour->setRating((int)$rating);
-            $entityManager->flush();
-            $this->addFlash('success', 'Votre note a été enregistrée avec succès.');
-        } else {
-            $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement de votre note.');
-        }
-
-        return $this->redirectToRoute('app_cours_show', ['id' => $cour->getId()]);
-    }
+    
 
 
 }

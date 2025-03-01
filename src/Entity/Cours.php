@@ -152,15 +152,5 @@ class Cours
         return $this;
     }
 
-    public function getRating(): ?int
-    {
-        return $this->rating;
-    }
 
-    public function setRating(?int $rating): static
-    {
-        $this->rating = $rating;
-
-        return $this;
-    }
 }
