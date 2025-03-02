@@ -45,8 +45,6 @@ class Cours
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $supportC = null;
 
-   
-
     #[ORM\Column(length: 255)]
   
     private ?string $niveau = null;
