@@ -49,11 +49,18 @@ class Cours
   
     private ?string $niveau = null;
 
+    /**
+     * @var Collection<int, Rating>
+     */
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'cours')]
+    private Collection $ratings;
+
     public function __construct()
     {
         $this->devoirs = new ArrayCollection();
       
         $this->dateC = new \DateTime();
+        $this->ratings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +170,36 @@ class Cours
     public function setniveau(string $niveau): static
     {
         $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Rating>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): static
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->setCours($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): static
+    {
+        if ($this->ratings->removeElement($rating)) {
+            // set the owning side to null (unless already changed)
+            if ($rating->getCours() === $this) {
+                $rating->setCours(null);
+            }
+        }
 
         return $this;
     }

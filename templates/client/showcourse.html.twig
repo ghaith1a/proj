@@ -132,6 +132,40 @@
             transform: scale(1.1);
             background: rgba(220, 53, 69, 0.2);
         }
+
+        .rating-section {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .rating-stars {
+            font-size: 1.5rem;
+            color: #ffc107;
+        }
+
+        .rating-count {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .rating-form {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .rating-item {
+            transition: all 0.3s ease;
+        }
+
+        .rating-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
     </style>
 {% endblock %}
 
@@ -141,7 +175,7 @@
         <div class="container py-5">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center">
-                        <h1 class="display-3 text-white animated slideInDown">{{ cour.titre }}</h1>
+                    <h1 class="display-3 text-white animated slideInDown">{{ cour.titre }}</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
                             <li class="breadcrumb-item"><a class="text-white" href="{{ path('app_courses') }}">Courses</a></li>
@@ -244,6 +278,113 @@
                                     <i class="fas fa-tasks me-2"></i>Devoirs
                                 </a>
                             </div>
+                            <div class="col-sm-12 mt-3">
+                                <a href="{{ path('app_course_qr_code', {'id': cour.id}) }}" 
+                                   class="btn btn-success btn-sm w-100" target="_blank">
+                                    <i class="fas fa-qrcode me-2"></i>Générer QR Code
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Rating Section -->
+                        <div class="rating-section mt-4">
+                            <h4 class="section-title">Évaluations</h4>
+                            
+                            <!-- Average Rating Display -->
+                            <div class="text-center mb-4">
+                                {% if cour.ratings|length > 0 %}
+                                    <div class="rating-stars">
+                                        {% set avgRating = cour.ratings|reduce((sum, rating) => sum + rating.value) / cour.ratings|length %}
+                                        {% for i in 1..5 %}
+                                            <i class="fas fa-star{% if i > avgRating %}-o{% endif %} text-warning"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="rating-count">
+                                        {{ cour.ratings|length }} évaluation(s)
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Aucune évaluation pour le moment</p>
+                                {% endif %}
+                            </div>
+                        
+                            <!-- Rating Form -->
+                            {% if app.user %}
+                                {% set userRating = null %}
+                                {% for rating in cour.ratings %}
+                                    {% if rating.user == app.user %}
+                                        {% set userRating = rating %}
+                                    {% endif %}
+                                {% endfor %}
+                        
+                                {% if userRating is null %}
+                                    <div class="rating-form">
+                                        {{ form_start(rating_form) }}
+                                            <div class="mb-3">
+                                                {{ form_row(rating_form.value, {
+                                                    'label': 'Votre note',
+                                                    'attr': {
+                                                        'class': 'rating',
+                                                        'data-show-clear': 'false',
+                                                        'data-show-caption': 'false'
+                                                    }
+                                                }) }}
+                                            </div>
+                                            <div class="mb-3">
+                                                {{ form_row(rating_form.comment, {
+                                                    'label': 'Votre commentaire (optionnel)',
+                                                    'attr': {'rows': 3}
+                                                }) }}
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-star me-2"></i>Évaluer
+                                            </button>
+                                        {{ form_end(rating_form) }}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Vous avez déjà évalué ce cours
+                                        <a href="{{ path('app_rating_edit', {'id': userRating.id}) }}" 
+                                           class="btn btn-sm btn-outline-primary ms-3">
+                                            Modifier mon évaluation
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <a href="{{ path('app_login') }}">Connectez-vous</a> pour évaluer ce cours
+                                </div>
+                            {% endif %}
+                        
+                            <!-- Individual Ratings -->
+                            {% if cour.ratings|length > 0 %}
+                                <div class="ratings-list mt-4">
+                                    <h5>Avis des utilisateurs</h5>
+                                    {% for rating in cour.ratings %}
+                                        <div class="rating-item card mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <div>
+                                                        <strong>{{ rating.user.username }}</strong>
+                                                        <small class="text-muted ms-2">
+                                                            {{ rating.createdAt|date('d/m/Y') }}
+                                                        </small>
+                                                    </div>
+                                                    <div class="rating-stars">
+                                                        {% for i in 1..5 %}
+                                                            <i class="fas fa-star{% if i > rating.value %}-o{% endif %} text-warning"></i>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% if rating.comment %}
+                                                    <p class="mb-0">{{ rating.comment }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

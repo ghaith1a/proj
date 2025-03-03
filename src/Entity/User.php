@@ -54,12 +54,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Planning::class, mappedBy: 'user')]
     private Collection $plannings;
 
+    /**
+     * @var Collection<int, Rating>
+     */
+    #[ORM\ManyToMany(targetEntity: Rating::class, mappedBy: 'user')]
+    private Collection $ratings;
+
     
 
     public function __construct()
     {
         $this->plannings = new ArrayCollection();
         $this->roles = ['ROLE_USER'];
+        $this->ratings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -256,6 +263,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($planning->getUser() === $this) {
                 $planning->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Rating>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->ratings;
+    }
+
+    public function addRating(Rating $rating): static
+    {
+        if (!$this->ratings->contains($rating)) {
+            $this->ratings->add($rating);
+            $rating->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Rating $rating): static
+    {
+        if ($this->ratings->removeElement($rating)) {
+            $rating->removeUser($this);
         }
 
         return $this;
