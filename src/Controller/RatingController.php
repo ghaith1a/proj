@@ -39,23 +39,28 @@ class RatingController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_rating_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Rating $rating, EntityManagerInterface $entityManager): Response
-    {
-        $this->denyAccessUnlessGranted('EDIT', $rating);
-
-        $form = $this->createForm(RatingType::class, $rating);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Votre évaluation a été mise à jour avec succès !');
-            return $this->redirectToRoute('app_course_show', ['id' => $rating->getCours()->getId()]);
-        }
-
-        return $this->render('rating/edit.html.twig', [
-            'rating' => $rating,
-            'form' => $form->createView(),
-        ]);
+public function edit(Request $request, Rating $rating, EntityManagerInterface $entityManager): Response
+{
+    // Vérifier si l'utilisateur actuel est l'auteur de l'évaluation
+    if ($rating->getUser() !== $this->getUser()) {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas modifier cette évaluation.');
     }
+
+    $form = $this->createForm(RatingType::class, $rating);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre évaluation a été mise à jour avec succès !');
+        return $this->redirectToRoute('app_course_show', ['id' => $rating->getCours()->getId()]);
+    }
+
+    return $this->render('rating/edit.html.twig', [
+        'rating' => $rating,
+        'form' => $form->createView(),
+        'cours' => $rating->getCours()
+    ]);
+}
+    
 }
