@@ -144,18 +144,25 @@ final class ClientController extends AbstractController
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    #[Route('/course/{id}', name: 'app_course_show')]
     public function show11(Cours $cour, Request $request, EntityManagerInterface $entityManager): Response
-{
-    $rating = new Rating();
-    $rating->setCours($cour);
-    $rating->setUser($this->getUser());
+    {
+        // Create new rating form only if user is logged in
+        $rating_form = null;
+        if ($this->getUser()) {
+            $rating = new Rating();
+            $rating->setCours($cour);
+            $rating->setUser($this->getUser());
+            
+            $rating_form = $this->createForm(RatingType::class, $rating, [
+                'action' => $this->generateUrl('app_rating_new', ['id' => $cour->getId()]),
+                'method' => 'POST',
+            ]);
+        }
 
-    $form = $this->createForm(RatingType::class, $rating);
-    $form->handleRequest($request);
-
-    return $this->render('client/showcourse.html.twig', [
-        'cour' => $cour,
-        'rating_form' => $form->createView(),
-    ]);
+        return $this->render('client/showcourse.html.twig', [
+            'cour' => $cour,
+            'rating_form' => $rating_form ? $rating_form->createView() : null,
+        ]);
 }
 }

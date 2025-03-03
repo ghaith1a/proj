@@ -55,12 +55,19 @@ class Cours
     #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'cours')]
     private Collection $ratings;
 
+    /**
+     * @var Collection<int, Rating>
+     */
+    #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'cours')]
+    private Collection $Ratings;
+
     public function __construct()
     {
         $this->devoirs = new ArrayCollection();
       
         $this->dateC = new \DateTime();
         $this->ratings = new ArrayCollection();
+        $this->Ratings = new ArrayCollection();
     }
 
     public function getId(): ?int
