@@ -1,51 +1,5 @@
-<!-- Rating Form -->
-{% if app.user %}
-    {% set userRating = null %}
-    {% for rating in cour.ratings %}
-        {% if rating.user == app.user %}
-            {% set userRating = rating %}
-        {% endif %}
-    {% endfor %}
-
-    {% if userRating is null %}
-        {% if rating_form is defined and rating_form is not null %}
-            <div class="rating-form">
-                {{ form_start(rating_form) }}
-                    <div class="mb-3">
-                        {{ form_row(rating_form.value, {
-                            'label': 'Votre note',
-                            'attr': {
-                                'class': 'rating',
-                                'data-show-clear': 'false',
-                                'data-show-caption': 'false'
-                            }
-                        }) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_row(rating_form.comment, {
-                            'label': 'Votre commentaire (optionnel)',
-                            'attr': {'rows': 3}
-                        }) }}
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-star me-2"></i>Évaluer
-                    </button>
-                {{ form_end(rating_form) }}
-            </div>
-        {% endif %}
-    {% else %}
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle me-2"></i>
-            Vous avez déjà évalué ce cours
-            <a href="{{ path('app_rating_edit', {'id': userRating.id}) }}" 
-               class="btn btn-sm btn-outline-primary ms-3">
-                Modifier mon évaluation
-            </a>
-        </div>
-    {% endif %}
-{% else %}
-    <div class="alert alert-info">
-        <i class="fas fa-info-circle me-2"></i>
-        <a href="{{ path('app_login') }}">Connectez-vous</a> pour évaluer ce cours
-    </div>
-{% endif %}
+{# templates/rating/_form.html.twig #}
+{{ form_start(form, {'attr': {'class': 'rating-form'}}) }}
+    {{ form_widget(form) }}
+    <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

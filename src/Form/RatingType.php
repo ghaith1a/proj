@@ -21,12 +21,12 @@ class RatingType extends AbstractType
                 'widget' => 'single_text'
             ])
             ->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-                'multiple' => false, // ✅ Doit être `false` pour une relation ManyToOne
-                'expanded' => false,
-            ])
-            
+    'class' => User::class,
+    'choice_label' => 'id',
+    'multiple' => false, // ✅ Doit être `false` pour une relation ManyToOne
+    'expanded' => false,
+])
+
             ->add('cours', EntityType::class, [
                 'class' => Cours::class,
 'choice_label' => 'id',
